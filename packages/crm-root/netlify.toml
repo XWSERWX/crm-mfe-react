@@ -3,9 +3,9 @@
   publish = "dist"
 
 [build.environment]
-  AUTH_URL = "https://crm-mfe-auth.netlify.app"
-  CLIENTS_URL = "https://crm-mfe-clients.netlify.app"
-  DEALS_URL = "https://crm-mfe-deals.netlify.app"
+  AUTH_URL = "https://elaborate-mochi-fbcbb9.netlify.app"
+  CLIENTS_URL = "https://remarkable-meringue-a5de53.netlify.app"
+  DEALS_URL = "https://dashing-mousse-c8cc33.netlify.app"
 
 [[redirects]]
   from = "/*"
