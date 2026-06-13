@@ -1,0 +1,101 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # Определяем, какие пакеты изменились
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      auth: ${{ steps.filter.outputs.auth }}
+      clients: ${{ steps.filter.outputs.clients }}
+      deals: ${{ steps.filter.outputs.deals }}
+      root: ${{ steps.filter.outputs.root }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            auth:
+              - 'packages/mfe-auth/**'
+              - 'packages/crm-types/**'
+            clients:
+              - 'packages/mfe-clients/**'
+              - 'packages/crm-types/**'
+            deals:
+              - 'packages/mfe-deals/**'
+              - 'packages/crm-types/**'
+            root:
+              - 'packages/crm-root/**'
+              - 'packages/crm-types/**'
+
+  deploy-auth:
+    needs: changes
+    if: needs.changes.outputs.auth == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build:auth
+      - run: npx netlify-cli deploy --prod --dir=packages/mfe-auth/dist --site=${{ secrets.NETLIFY_AUTH_SITE_ID }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+  deploy-clients:
+    needs: changes
+    if: needs.changes.outputs.clients == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build:clients
+      - run: npx netlify-cli deploy --prod --dir=packages/mfe-clients/dist --site=${{ secrets.NETLIFY_CLIENTS_SITE_ID }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+  deploy-deals:
+    needs: changes
+    if: needs.changes.outputs.deals == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build:deals
+      - run: npx netlify-cli deploy --prod --dir=packages/mfe-deals/dist --site=${{ secrets.NETLIFY_DEALS_SITE_ID }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+  deploy-root:
+    needs: changes
+    if: needs.changes.outputs.root == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build:root
+        env:
+          AUTH_URL: ${{ secrets.AUTH_URL }}
+          CLIENTS_URL: ${{ secrets.CLIENTS_URL }}
+          DEALS_URL: ${{ secrets.DEALS_URL }}
+      - run: npx netlify-cli deploy --prod --dir=packages/crm-root/dist --site=${{ secrets.NETLIFY_ROOT_SITE_ID }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}

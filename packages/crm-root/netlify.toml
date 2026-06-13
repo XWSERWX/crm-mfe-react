@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  AUTH_URL = "https://crm-mfe-auth.netlify.app"
+  CLIENTS_URL = "https://crm-mfe-clients.netlify.app"
+  DEALS_URL = "https://crm-mfe-deals.netlify.app"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
