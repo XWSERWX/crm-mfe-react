@@ -1,6 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 import { StoreProvider, useSimpleStore } from './app/store/SimpleStore';
 import Layout from './widgets/layout';
@@ -63,9 +63,9 @@ const AppRoutes = () => {
 
 const App = () => (
   <StoreProvider>
-    <BrowserRouter>
+    <HashRouter>
       <AppRoutes />
-    </BrowserRouter>
+    </HashRouter>
   </StoreProvider>
 );
 
