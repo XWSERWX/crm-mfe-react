@@ -2,6 +2,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "cd ../.. && npm install",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ../crm-types",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
